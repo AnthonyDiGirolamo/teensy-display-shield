@@ -1,0 +1,48 @@
+* teensy-display-shield
+
+  Handheld [[https://excamera.com/sphinx/gameduino3/][Gameduino3]] display shield for the [[https://www.pjrc.com/store/teensy41.html][Teensy 4.1]], [[https://www.pjrc.com/store/teensy36.html][3.6]] or [[https://www.adafruit.com/category/946][Adafruit Feather form
+  factor boards]].
+
+  [[./images/v0_assembled1.jpg]]
+
+  [[./images/v0_component_placement1.jpg]]
+
+** Version 0
+
+*** Features
+
+    - Teensy and Feather headers.
+    - Arduino shield header for use with a Gameduino3 screen.
+    - USB-A host jack for Teensy 3.6 and 4.1 boards. For plugging in an external
+      keyboard, mouse, or controller.
+    - 3v coin cell footprint for Teensy RTC.
+    - Through hole buttons for up, down, left, right, a, b, x, y, start, select.
+    - On board power:
+      - LiPo charging using the [[https://lcsc.com/product-detail/PMIC-Battery-Management_TOPPOWER-Nanjing-Extension-Microelectronics-TP4054_C32574.html][TP4054]] (at 500mA charge-rate).
+      - 5 volt boost regulator using the [[https://lcsc.com/product-detail/DC-DC-Converters_Feeling-Tech-FP6291LR-G1_C18701.html][FP6291]]. This powers the Gameduino3 and Teensy.
+      - Load sharing between USB and charging.
+      - Battery power slide switch.
+
+*** Eratta
+
+    Charging the battery won't work with the power switch in the off
+    positon. One cut and jumper wire is needed. See these images:
+
+    [[./images/v0_bodge1.jpg]]
+
+    [[./images/v0_bodge2.jpg]]
+
+** Version 1
+
+*** Required Fixes
+    - [ ] Correct missing silkscreen pin labels
+    - [ ] Make all through hole GND connections square pads.
+
+*** Planned Features
+    - Push-button on/off operation using [[https://web.archive.org/web/20201001131408/http://www.mosaic-industries.com/embedded-systems/microcontroller-projects/electronic-circuits/push-button-switch-turn-on/microcontroller-latching-on-off][this schematic]].
+    - L and R shoulder buttons.
+    - Analog sticks?
+    - [[https://www.crowdsupply.com/excamera/gameduino-3x-dazzler][Gameduino 3X Dazzler]] surface mount footprint.
+    - Display panel FPC connector and backlight driver.
+    - Solder jumpers to control battery charge rate.
+

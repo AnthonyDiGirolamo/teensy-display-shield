@@ -1,0 +1,1 @@
+Please see [[https://github.com/jamesbowman/gd2-lib]] for details. This copy is of [[https://github.com/jamesbowman/gd2-lib/commit/88b0ee2a4fc8fa9497696d772feb5235b4c310c3][commit 88b0ee2]].
