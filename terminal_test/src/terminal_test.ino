@@ -10,7 +10,6 @@ template<>        inline Print& operator <<(Print &obj, float arg) { obj.print(a
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "circular_buffer.h"
 #include "terminal.h"
 
 #include "input.h"
