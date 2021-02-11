@@ -35,8 +35,8 @@
 ** Version 1
 
 *** Required Fixes
-    - [ ] Correct missing silkscreen pin labels
-    - [ ] Make all through hole GND connections square pads.
+    - Correct missing silkscreen pin labels
+    - Make all through hole GND connections square pads.
 
 *** Planned Features
     - Push-button on/off operation using [[https://web.archive.org/web/20201001131408/http://www.mosaic-industries.com/embedded-systems/microcontroller-projects/electronic-circuits/push-button-switch-turn-on/microcontroller-latching-on-off][this schematic]].
