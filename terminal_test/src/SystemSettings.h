@@ -7,7 +7,7 @@
 #include <SPI.h>
 #include <GD2.h>
 #include <TimeLib.h>
-#include "terminal.h"
+#include "GD2Terminal.h"
 #include "input.h"
 
 #define BATTERY_VOLTAGE_DIVIDER_PIN A8

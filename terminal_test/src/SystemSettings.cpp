@@ -1,7 +1,7 @@
 #include "SystemSettings.h"
 
 extern GDClass GD;
-extern Terminal terminal;
+extern GD2Terminal terminal;
 extern Input controller;
 
 SystemSettings::SystemSettings(void) {
@@ -120,7 +120,7 @@ void SystemSettings::draw() {
     sprintf(line_buffer, "%c%c%c%c%c%c%c%c\n", BYTE_TO_BINARY(controller.buttons));
     terminal.foreground_color = TERMINAL_VGA_BRIGHT_CYAN;
     terminal.append_string(line_buffer);
-    if (controller.buttons & 1 == 0) {
+    if ((controller.buttons & 1) == 0) {
       terminal.ring_bell();
     }
   }
@@ -131,7 +131,7 @@ void SystemSettings::draw() {
   // Be sure to reset the bitmap_handle afterwards
   terminal.draw(position_x, position_y);
 
-  GD.ColorRGB(WHITE);
+  GD.ColorRGB(COLOR_WHITE);
 
   // Draw Brightness Slider
   GD.Tag(TAG_BRIGHTNESS_SLIDER);

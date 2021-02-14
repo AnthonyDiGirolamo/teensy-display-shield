@@ -1,11 +1,11 @@
-#include "terminal.h"
+#include "GD2Terminal.h"
 
 // 120 character strings
 char terminal_linebuffer[] = "                                                                                                                          ";
 
 uint8_t *const linebuffer_const = (uint8_t*)terminal_linebuffer;
 
-Terminal::Terminal() {
+GD2Terminal::GD2Terminal() {
   scrollback_length = 100;
   foreground_color = 15;
   background_color = 0;
@@ -17,7 +17,7 @@ Terminal::Terminal() {
   reset();
 }
 
-void Terminal::begin(uint8_t initial_font_mode) {
+void GD2Terminal::begin(uint8_t initial_font_mode) {
   if (initial_font_mode == TEXTVGA) {
     set_font_vga();
   }
@@ -27,10 +27,10 @@ void Terminal::begin(uint8_t initial_font_mode) {
   set_size_fullscreen();
 }
 
-void Terminal::set_size_fullscreen() {
+void GD2Terminal::set_size_fullscreen() {
   int character_width = 8;
   int character_height = 8;
-  if (current_font = TEXTVGA) {
+  if (current_font == TEXTVGA) {
     character_height = 16;
   }
   int row_count = floor(GD.h / character_height);
@@ -39,31 +39,31 @@ void Terminal::set_size_fullscreen() {
 }
 
 
-void Terminal::set_window_bg_color(uint32_t color) {
+void GD2Terminal::set_window_bg_color(uint32_t color) {
   terminal_window_bg_color = color;
 }
 
-void Terminal::set_window_opacity(uint8_t opacity) {
+void GD2Terminal::set_window_opacity(uint8_t opacity) {
   terminal_window_opacity = opacity;
 }
 
-void Terminal::enable_vga_background_colors() {
+void GD2Terminal::enable_vga_background_colors() {
   background_colors_enabled = true;
 }
 
-void Terminal::disable_vga_background_colors() {
+void GD2Terminal::disable_vga_background_colors() {
   background_colors_enabled = false;
 }
 
-uint32_t Terminal::bitmap_byte_size() {
+uint32_t GD2Terminal::bitmap_byte_size() {
   return scrollback_length * bytes_per_line;
 }
 
-uint32_t Terminal::ram_end_address() {
+uint32_t GD2Terminal::ram_end_address() {
   return bitmap_byte_size()+2;
 }
 
-void Terminal::change_size(uint16_t rows, uint16_t columns){
+void GD2Terminal::change_size(uint16_t rows, uint16_t columns){
   lines_per_screen = rows;
   characters_per_line = columns;
   bytes_per_line = characters_per_line;
@@ -84,17 +84,17 @@ void Terminal::change_size(uint16_t rows, uint16_t columns){
   reset();
 }
 
-void Terminal::set_font_8x8() {
+void GD2Terminal::set_font_8x8() {
   current_font = TEXT8X8;
   line_pixel_height = 8;
 }
 
-void Terminal::set_font_vga() {
+void GD2Terminal::set_font_vga() {
   current_font = TEXTVGA;
   line_pixel_height = 16;
 }
 
-void Terminal::reset() {
+void GD2Terminal::reset() {
   // // set all line history to spaces
   // strncpy(terminal_linebuffer, terminal_blank_line, characters_per_line);
   // for (uint16_t i = 0; i<scrollback_length; i++) {
@@ -111,11 +111,11 @@ void Terminal::reset() {
   set_scrollbar_handle_size();
 }
 
-void Terminal::ring_bell() {
-  bell = 40;
+void GD2Terminal::ring_bell() {
+  bell = 60;
 }
 
-void Terminal::update_scrollbar_position(uint16_t new_position) {
+void GD2Terminal::update_scrollbar_position(uint16_t new_position) {
   scrollbar_position = new_position;
   if (scrollbar_position < scrollbar_size_half)
     scrollbar_position = scrollbar_size_half;
@@ -134,12 +134,12 @@ void Terminal::update_scrollbar_position(uint16_t new_position) {
   }
 }
 
-void Terminal::upload_to_graphics_ram() {
+void GD2Terminal::upload_to_graphics_ram() {
   GD.cmd_memwrite(last_line_address*bytes_per_line, bytes_per_line);
   GD.copy(linebuffer_const, bytes_per_line);
 }
 
-void Terminal::set_scrollbar_handle_size() {
+void GD2Terminal::set_scrollbar_handle_size() {
   lines_per_screen_percent = ((float) lines_per_screen) / ((float) line_count);
   if (lines_per_screen_percent > 1.0)
     lines_per_screen_percent = 1.0;
@@ -148,7 +148,7 @@ void Terminal::set_scrollbar_handle_size() {
   update_scrollbar_position(65535);
 }
 
-void Terminal::erase_line_buffer() {
+void GD2Terminal::erase_line_buffer() {
   // erase current line
   for (uint8_t i=0; i<120; i++) {
     terminal_linebuffer[i] = ' ';
@@ -162,7 +162,7 @@ void Terminal::erase_line_buffer() {
   }
 }
 
-void Terminal::new_line() {
+void GD2Terminal::new_line() {
   // copy terminal_linebuffer to FT810 RAM
   upload_to_graphics_ram();
   cursor_index = 0;
@@ -177,7 +177,7 @@ void Terminal::new_line() {
   set_scrollbar_handle_size();
 }
 
-void Terminal::append_string(const char* str) {
+void GD2Terminal::append_string(const char* str) {
   for(uint16_t i=0; i<strlen(str); i++) {
     append_character(str[i]);
   }
@@ -187,7 +187,7 @@ void Terminal::append_string(const char* str) {
   // append_character((char) 13);
 }
 
-void Terminal::put_char(char newchar) {
+void GD2Terminal::put_char(char newchar) {
   if (current_font == TEXTVGA) {
     terminal_linebuffer[cursor_index*2+1] = (background_color << 4) | foreground_color;
     terminal_linebuffer[cursor_index*2] = newchar;
@@ -197,7 +197,7 @@ void Terminal::put_char(char newchar) {
   }
 }
 
-uint8_t Terminal::append_character(char newchar) {
+uint8_t GD2Terminal::append_character(char newchar) {
   if (cursor_index >= characters_per_line
       || newchar == TERMINAL_KEY_CR
       || newchar == TERMINAL_KEY_LF) {
@@ -222,16 +222,16 @@ uint8_t Terminal::append_character(char newchar) {
   return CHAR_READ;
 }
 
-void Terminal::set_position(int x, int y) {
+void GD2Terminal::set_position(int x, int y) {
   draw_x_coord = x;
   draw_y_coord = y;
 }
 
-void Terminal::draw() {
+void GD2Terminal::draw() {
   draw(draw_x_coord, draw_y_coord);
 }
 
-void Terminal::draw(int startx, int starty) {
+void GD2Terminal::draw(int startx, int starty) {
   // Upload any lingering data from append_character calls.
   upload_to_graphics_ram();
 
@@ -289,7 +289,7 @@ void Terminal::draw(int startx, int starty) {
     // GD.Vertex2ii(DISPLAY_WIDTH, DISPLAY_HEIGHT);
   }
 
-  GD.ColorRGB(WHITE);
+  GD.ColorRGB(COLOR_WHITE);
 
   // Draw Terminal Text
 
@@ -307,8 +307,8 @@ void Terminal::draw(int startx, int starty) {
 
   GD.BlendFunc(SRC_ALPHA, ONE_MINUS_SRC_ALPHA);
   GD.ColorA(128); // alpha to 128/256
-  GD.cmd_bgcolor(VALHALLA);
-  GD.cmd_fgcolor(LIGHT_STEEL_BLUE);
+  GD.cmd_bgcolor(COLOR_VALHALLA);
+  GD.cmd_fgcolor(COLOR_LIGHT_STEEL_BLUE);
 
   GD.Tag(TAG_SCROLLBAR);
   GD.cmd_scrollbar(draw_x_coord + draw_width - SCROLLBAR_WIDTH,

@@ -10,7 +10,7 @@ template<>        inline Print& operator <<(Print &obj, float arg) { obj.print(a
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "terminal.h"
+#include "GD2Terminal.h"
 
 #include "input.h"
 
@@ -23,7 +23,7 @@ time_t getTeensy3Time() {
 
 
 Input controller;
-Terminal terminal;
+GD2Terminal terminal;
 SystemSettings system_settings;
 Munch munch;
 
@@ -74,7 +74,7 @@ void setup() {
   terminal.begin(TEXTVGA);
   // terminal.begin(TEXT8X8);
   terminal.set_window_bg_color(0x000000);  // Background window color
-  terminal.set_window_opacity(255);  // 0-255
+  terminal.set_window_opacity(128);  // 0-255
 
   // Changing Fonts -------------------------------------------------
   // 8X8 Monochrome
@@ -139,12 +139,12 @@ void loop() {
           "FPS: %.2f --- DisplayList: %3.2f%% (%u / 8192)",
           1.0 / delta_time, 100.0 * ((float)display_list_offset/8192), display_list_offset);
   // Draw white text with a black outline.
-  GD.ColorRGB(BLACK);
+  GD.ColorRGB(COLOR_BLACK);
   GD.cmd_text(0, GD.h-23,   18, 0, system_settings.line_buffer);
   GD.cmd_text(2, GD.h-23,   18, 0, system_settings.line_buffer);
   GD.cmd_text(1, GD.h-23-1, 18, 0, system_settings.line_buffer);
   GD.cmd_text(1, GD.h-23+1, 18, 0, system_settings.line_buffer);
-  GD.ColorRGB(WHITE);
+  GD.ColorRGB(COLOR_WHITE);
   GD.cmd_text(1, GD.h-23,   18, 0, system_settings.line_buffer);
 
   // Get the size (current position) of the display list.

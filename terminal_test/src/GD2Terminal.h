@@ -80,9 +80,9 @@
 #define TERMINAL_BITMAP_HANDLE_TEXT 14
 #define TERMINAL_BITMAP_HANDLE_BACKGROUND 13
 
-class Terminal {
+class GD2Terminal {
 public:
-  Terminal();
+  GD2Terminal();
 
   uint16_t cursor_index;
   uint16_t line_count;
