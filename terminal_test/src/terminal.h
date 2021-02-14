@@ -8,41 +8,41 @@
 // DB32 Pallete
 // https://github.com/geoffb/dawnbringer-palettes
 
-#define BLACK            0x000000  // #000000
-#define VALHALLA         0x222034  // #222034
-#define LOULOU           0x45283c  // #45283c
-#define OILED_CEDAR      0x663931  // #663931
-#define ROPE             0x8f563b  // #8f563b
-#define TAHITI_GOLD      0xdf7126  // #df7126
-#define TWINE            0xd9a066  // #d9a066
-#define PANCHO           0xeec39a  // #eec39a
+#define COLOR_BLACK            0x000000  // #000000
+#define COLOR_VALHALLA         0x222034  // #222034
+#define COLOR_LOULOU           0x45283c  // #45283c
+#define COLOR_OILED_CEDAR      0x663931  // #663931
+#define COLOR_ROPE             0x8f563b  // #8f563b
+#define COLOR_TAHITI_GOLD      0xdf7126  // #df7126
+#define COLOR_TWINE            0xd9a066  // #d9a066
+#define COLOR_PANCHO           0xeec39a  // #eec39a
 
-#define GOLDEN_FIZZ      0xfbf236  // #fbf236
-#define ATLANTIS         0x99e550  // #99e550
-#define RAINFOREST       0x6abe30  // #6abe30
-#define ELF_GREEN        0x37946e  // #37946e
-#define DELL             0x4b692f  // #4b692f
-#define VERDIGRIS        0x524b24  // #524b24
-#define OPAL             0x323c39  // #323c39
-#define DEEP_KOAMARU     0x3f3f74  // #3f3f74
+#define COLOR_GOLDEN_FIZZ      0xfbf236  // #fbf236
+#define COLOR_ATLANTIS         0x99e550  // #99e550
+#define COLOR_RAINFOREST       0x6abe30  // #6abe30
+#define COLOR_ELF_GREEN        0x37946e  // #37946e
+#define COLOR_DELL             0x4b692f  // #4b692f
+#define COLOR_VERDIGRIS        0x524b24  // #524b24
+#define COLOR_OPAL             0x323c39  // #323c39
+#define COLOR_DEEP_KOAMARU     0x3f3f74  // #3f3f74
 
-#define VENICE_BLUE      0x306082  // #306082
-#define ROYAL_BLUE       0x5b6ee1  // #5b6ee1
-#define CORNFLOWER       0x639bff  // #639bff
-#define VIKING           0x5fcde4  // #5fcde4
-#define LIGHT_STEEL_BLUE 0xcbdbfc  // #cbdbfc
-#define WHITE            0xffffff  // #ffffff
-#define HEATHER          0x9badb7  // #9badb7
-#define TOPAZ            0x847e87  // #847e87
+#define COLOR_VENICE_BLUE      0x306082  // #306082
+#define COLOR_ROYAL_BLUE       0x5b6ee1  // #5b6ee1
+#define COLOR_CORNFLOWER       0x639bff  // #639bff
+#define COLOR_VIKING           0x5fcde4  // #5fcde4
+#define COLOR_LIGHT_STEEL_BLUE 0xcbdbfc  // #cbdbfc
+#define COLOR_WHITE            0xffffff  // #ffffff
+#define COLOR_HEATHER          0x9badb7  // #9badb7
+#define COLOR_TOPAZ            0x847e87  // #847e87
 
-#define DIM_GRAY         0x696a6a  // #696a6a
-#define SMOKEY_ASH       0x595652  // #595652
-#define CLAIRVOYANT      0x76428a  // #76428a
-#define RED              0xac3232  // #ac3232
-#define MANDY            0xd95763  // #d95763
-#define PLUM             0xd77bba  // #d77bba
-#define STINGER          0x8f974a  // #8f974a
-#define BROWN            0x8a6f30  // #8a6f30
+#define COLOR_DIM_GRAY         0x696a6a  // #696a6a
+#define COLOR_SMOKEY_ASH       0x595652  // #595652
+#define COLOR_CLAIRVOYANT      0x76428a  // #76428a
+#define COLOR_RED              0xac3232  // #ac3232
+#define COLOR_MANDY            0xd95763  // #d95763
+#define COLOR_PLUM             0xd77bba  // #d77bba
+#define COLOR_STINGER          0x8f974a  // #8f974a
+#define COLOR_BROWN            0x8a6f30  // #8a6f30
 
 #define TERMINAL_KEY_BELL 7
 #define TERMINAL_KEY_BACKSPACE 8
@@ -102,10 +102,12 @@ public:
   uint16_t scrollbar_position;
   float scrollbar_position_percent;
   uint16_t scroll_offset;
-  int16_t draw_x_coord;
-  int16_t draw_y_coord;
+  int draw_x_coord;
+  int draw_y_coord;
   uint16_t draw_width;
   uint16_t draw_height;
+  uint32_t terminal_window_bg_color;
+  uint8_t terminal_window_opacity;
 
   uint16_t bell;
 
@@ -124,8 +126,12 @@ public:
   void new_line();
   void upload_to_graphics_ram();
   void update_scrollbar_position(uint16_t new_position);
+  void set_window_bg_color(uint32_t color);
+  void set_window_opacity(uint8_t opacity);
   void draw();
-  void draw(int16_t startx, int16_t starty);
+  void draw(int startx, int starty);
+  void set_position(int x, int y);
+  void set_size_fullscreen();
  private:
   void erase_line_buffer();
   void put_char(char newchar);

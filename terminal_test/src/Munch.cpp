@@ -17,10 +17,14 @@ uint8_t Munch::init(uint32_t ram_address) {
   current_frame_cell = 0;
   rendered_frames = false;
 
+  // Create the 128x128 bitmap for the munch texture
   GD.BitmapHandle(1);
   GD.BitmapSource(ram_starting_address);
   GD.BitmapLayout(L8, FRAME_BUFFER_ROW_BYTES, FRAME_BUFFER_HEIGHT);
+  // Tile 128x128 to fill the display
   GD.BitmapSize(NEAREST, REPEAT, REPEAT, GD.w, GD.h);
+  // No tiling
+  // GD.BitmapSize(NEAREST, BORDER, BORDER, GD.w, GD.h);
 
   // Create a 1x1 white pixel bitmap handle for drawing shaded squares
   GD.cmd_memset(ram_end_address() - 2, 0xFF, 2); // Two bytes for 1 RGB565 pixel
@@ -83,40 +87,36 @@ void Munch::color_wheel(uint8_t wheel_position) {
 
 void Munch::draw(void) {
   GD.SaveContext();
+  GD.VertexFormat(3); // means points are scaled by 8 from here on
 
   GD.Begin(BITMAPS);
   GD.cmd_scale(F16(2), F16(2));
   GD.cmd_setmatrix();
-  GD.Vertex2ii(0, 0, 1, current_frame_cell);
+
+  GD.BitmapHandle(1);
+  GD.Cell(current_frame_cell);
+  GD.Vertex2f(0, 0);
+
 
   GD.ColorA(128);
   GD.BlendFunc(SRC_ALPHA, ONE_MINUS_SRC_ALPHA);
 
-  GD.BlendFunc(ONE, ONE);  // Very washed out
+  // GD.BlendFunc(ONE, ONE);  // Very washed out
 
+  int screen_width = 64 * (1+floor(GD.w / 64));
+  int screen_height = 64 * (1+floor(GD.h / 64));
+  GD.BitmapHandle(2);
   uint8_t cwp = color_wheel_position;
-  for (int x = 0; x < GD.w; x+= 64) {
-    for (int y = 0; y < GD.w; y+= 64) {
+  for (int x = 0; x < screen_width; x+= 64) {
+    for (int y = 0; y < screen_height; y+= 64) {
       color_wheel(cwp);
-      cwp = (cwp + 10) % 256;
-      GD.Vertex2ii(x, y, 2);
+      cwp = (cwp + 5) % 256;
+      GD.Vertex2f(8*x, 8*y);
     }
   }
 
   GD.RestoreContext();
 
+  // Rotate colors
   color_wheel_position = (color_wheel_position + 1) % 256;
-
-  // Test different magic and base color values
-  // sprintf(line_buffer,
-  //         "base color: %u --- magic: %u )",
-  //         munch_base_color, munch_magic);
-
-  // Display millis and cell number
-  // sprintf(line_buffer,
-  //         "time: %u -- frame: %u )", last_frame_millis, current_frame_cell);
-
-  // GD.ColorRGB(0xFFFFFF);
-  // GD.cmd_text(2*GD.w/3, GD.h-16, 20, 0, line_buffer);
-
 }

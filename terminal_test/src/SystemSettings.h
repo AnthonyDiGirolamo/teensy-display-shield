@@ -11,7 +11,6 @@
 #include "input.h"
 
 #define BATTERY_VOLTAGE_DIVIDER_PIN A8
-#define SYSTEM_SETTINGS_BACKGROUNG_BITMAP 0
 
 #define BYTE_TO_BINARY_PATTERN "%c%c%c%c%c%c%c%c"
 #define BYTE_TO_BINARY(byte)  \

@@ -1,7 +1,6 @@
 #include "terminal.h"
 
 // 120 character strings
-const char terminal_blank_line[] = "                                                                                                                          ";
 char terminal_linebuffer[] = "                                                                                                                          ";
 
 uint8_t *const linebuffer_const = (uint8_t*)terminal_linebuffer;
@@ -13,18 +12,39 @@ Terminal::Terminal() {
   disable_vga_background_colors();
   draw_x_coord = 0;
   draw_y_coord = 0;
+  terminal_window_bg_color = 0;
+  terminal_window_opacity = 200;
   reset();
 }
 
 void Terminal::begin(uint8_t initial_font_mode) {
   if (initial_font_mode == TEXTVGA) {
     set_font_vga();
-    change_size(17, 60);
   }
   else {
     set_font_8x8();
-    change_size(34, 60);
   }
+  set_size_fullscreen();
+}
+
+void Terminal::set_size_fullscreen() {
+  int character_width = 8;
+  int character_height = 8;
+  if (current_font = TEXTVGA) {
+    character_height = 16;
+  }
+  int row_count = floor(GD.h / character_height);
+  int col_count = floor(GD.w / character_width);
+  change_size(row_count, col_count);
+}
+
+
+void Terminal::set_window_bg_color(uint32_t color) {
+  terminal_window_bg_color = color;
+}
+
+void Terminal::set_window_opacity(uint8_t opacity) {
+  terminal_window_opacity = opacity;
 }
 
 void Terminal::enable_vga_background_colors() {
@@ -128,12 +148,13 @@ void Terminal::set_scrollbar_handle_size() {
   update_scrollbar_position(65535);
 }
 
-int32_t unread_count;
-
 void Terminal::erase_line_buffer() {
   // erase current line
-  strncpy(terminal_linebuffer, terminal_blank_line, bytes_per_line);
+  for (uint8_t i=0; i<120; i++) {
+    terminal_linebuffer[i] = ' ';
+  }
 
+  // Set TEXTVGA default colors
   if (current_font == TEXTVGA) {
     for (uint8_t i=1; i<120; i+=2) {
       terminal_linebuffer[i] = (background_color << 4) | foreground_color;
@@ -201,11 +222,19 @@ uint8_t Terminal::append_character(char newchar) {
   return CHAR_READ;
 }
 
+void Terminal::set_position(int x, int y) {
+  draw_x_coord = x;
+  draw_y_coord = y;
+}
+
 void Terminal::draw() {
   draw(draw_x_coord, draw_y_coord);
 }
 
-void Terminal::draw(int16_t startx, int16_t starty) {
+void Terminal::draw(int startx, int starty) {
+  // Upload any lingering data from append_character calls.
+  upload_to_graphics_ram();
+
   if (startx != draw_x_coord || starty != draw_y_coord) {
     draw_x_coord = startx;
     draw_y_coord = starty;
@@ -243,9 +272,10 @@ void Terminal::draw(int16_t startx, int16_t starty) {
   else {
     // Draw a shaded Terminal Background with a 1x1 stretched bitmap
     // GD.BlendFunc(SRC_ALPHA, ONE_MINUS_SRC_ALPHA);
-    GD.ColorRGB(0x000000);
+    GD.ColorRGB(terminal_window_bg_color);
+
     // GD.ColorA(32+128); // opacity
-    GD.ColorA(32);
+    GD.ColorA(terminal_window_opacity);
     GD.Vertex2ii(draw_x_coord, draw_y_coord, TERMINAL_BITMAP_HANDLE_BACKGROUND);
     GD.ColorA(255);
 

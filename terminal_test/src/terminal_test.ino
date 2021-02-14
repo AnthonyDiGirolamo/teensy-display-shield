@@ -27,16 +27,32 @@ Terminal terminal;
 SystemSettings system_settings;
 Munch munch;
 
+// Standard GD3 Chip Select Pins
+#define GD3_CS 8
+#define GD3_SDCS 9
+
+// // Example custom pins
+// #define GD3_CS 21
+// #define GD3_SDCS 20
+// #define GD3_SCLK 14
+// #define GD3_MOSI 7
+// #define GD3_MISO 12
+
 void setup() {
   Serial.begin(115200);
+  // while (!Serial) {}
+
+  // // Teensy custom SPI pins
   // SPI.setMOSI(GD3_MOSI);
   // SPI.setMISO(GD3_MISO);
   // SPI.setSCK(GD3_SCLK);
+
   SPI.begin();
 
   // Gameduino3 Setup
   Serial.println("GD.begin()");
-  GD.begin(~GD_STORAGE);
+  GD.begin(~GD_STORAGE, GD3_CS, GD3_SDCS);
+  // GD.begin(GD_CALIBRATE | GD_TRIM | GD_STORAGE, GD3_CS, GD3_SDCS);
   Serial.println("GD.begin() Complete");
 
   // Enable printf/sprintf to print floats
@@ -54,13 +70,34 @@ void setup() {
 
   controller.begin();
 
-  terminal.begin(TEXTVGA);  // must come after GD.begin()
+  // Setup the terminal. Must come after GD.begin -------------------
+  terminal.begin(TEXTVGA);
+  // terminal.begin(TEXT8X8);
+  terminal.set_window_bg_color(0x000000);  // Background window color
+  terminal.set_window_opacity(255);  // 0-255
+
+  // Changing Fonts -------------------------------------------------
+  // 8X8 Monochrome
+  // terminal.set_font_8x8();
+  // VGA 16-color
+  terminal.set_font_vga();
+  // VGA background colors are disabled by default.
+  terminal.disable_vga_background_colors();
+  // Enable character backgound color. Disables window color&opacity
+  // terminal.enable_vga_background_colors();
+
+  // Font changes must be followed by setting a size ---------------
+  // Fullscreen
+  terminal.set_size_fullscreen();
+  // Custom Size
+  // terminal.change_size(row_count, column_count);
+
+  // Get FT81X first available ram address (after terminal data) ---
+  // terminal.ram_end_address();
 
   GD.ClearColorRGB(0x000000);
-
   system_settings.init();
   munch.init(system_settings.ram_end_address());
-
 }
 
 // Display List size
