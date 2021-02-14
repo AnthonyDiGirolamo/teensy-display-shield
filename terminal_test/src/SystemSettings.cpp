@@ -75,7 +75,7 @@ void SystemSettings::draw() {
   // terminal.reset();
 
   // Every 5 seconds print the time and battery voltage
-  if (millis() > last_terminal_refresh + 1000) {
+  if (millis() > last_terminal_refresh + 5000) {
     // Print time
     terminal.foreground_color = TERMINAL_VGA_BRIGHT_MAGENTA;
     terminal.background_color = TERMINAL_VGA_BRIGHT_CYAN;

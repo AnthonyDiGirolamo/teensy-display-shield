@@ -1,7 +1,6 @@
 #include "Munch.h"
 
 extern GDClass GD;
-extern Input controller;
 
 Munch::Munch(void) {
 }

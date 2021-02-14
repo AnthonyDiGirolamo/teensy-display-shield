@@ -1,7 +1,7 @@
 #include "GD2Terminal.h"
 
-// 120 character strings
-char terminal_linebuffer[] = "                                                                                                                          ";
+// 160 character line buffer
+char terminal_linebuffer[] = "                                                                                                                                                                 ";
 
 uint8_t *const linebuffer_const = (uint8_t*)terminal_linebuffer;
 
@@ -95,13 +95,6 @@ void GD2Terminal::set_font_vga() {
 }
 
 void GD2Terminal::reset() {
-  // // set all line history to spaces
-  // strncpy(terminal_linebuffer, terminal_blank_line, characters_per_line);
-  // for (uint16_t i = 0; i<scrollback_length; i++) {
-  //   GD.cmd_memwrite(i*characters_per_line, characters_per_line);
-  //   GD.copy(linebuffer_const, characters_per_line);
-  // }
-
   bell = 0;
   line_count = 1;
   cursor_index = 0;
@@ -112,6 +105,7 @@ void GD2Terminal::reset() {
 }
 
 void GD2Terminal::ring_bell() {
+  // Bell animation for 60 frames.
   bell = 60;
 }
 
@@ -131,6 +125,14 @@ void GD2Terminal::update_scrollbar_position(uint16_t new_position) {
   }
   else {
     scroll_offset = (uint16_t) (scrollbar_position_percent * ((float)line_count - lines_per_screen));
+  }
+}
+
+void GD2Terminal::update_scrollbar() {
+  switch (GD.inputs.track_tag & 0xff) {
+  case TAG_SCROLLBAR:
+    update_scrollbar_position(GD.inputs.track_val);
+    break;
   }
 }
 
@@ -271,28 +273,15 @@ void GD2Terminal::draw(int startx, int starty) {
     GD.BlendFunc(ONE, ZERO);
   else {
     // Draw a shaded Terminal Background with a 1x1 stretched bitmap
-    // GD.BlendFunc(SRC_ALPHA, ONE_MINUS_SRC_ALPHA);
+    GD.BlendFunc(SRC_ALPHA, ONE_MINUS_SRC_ALPHA);
     GD.ColorRGB(terminal_window_bg_color);
-
-    // GD.ColorA(32+128); // opacity
     GD.ColorA(terminal_window_opacity);
     GD.Vertex2ii(draw_x_coord, draw_y_coord, TERMINAL_BITMAP_HANDLE_BACKGROUND);
     GD.ColorA(255);
-
-    // Terminal Background with a Rectangle primitive
-    // GD.Begin(RECTS);
-    // GD.BlendFunc(SRC_ALPHA, ONE_MINUS_SRC_ALPHA);
-    // GD.ColorRGB(0x000000);
-    // GD.ColorA(128);
-    // GD.LineWidth(1*16); // 1 pixel radius
-    // GD.Vertex2ii(0, DISPLAY_HEIGHT - 7*16);
-    // GD.Vertex2ii(DISPLAY_WIDTH, DISPLAY_HEIGHT);
   }
 
   GD.ColorRGB(COLOR_WHITE);
-
   // Draw Terminal Text
-
   for (int i=0; i<min_lines; i++) {
     ycoord = (draw_y_coord + (lines_per_screen * line_pixel_height)) - line_pixel_height - (line_pixel_height * i);
     // Change the bitmap start address
@@ -304,9 +293,8 @@ void GD2Terminal::draw(int startx, int starty) {
   }
 
   // Draw Scrollbar
-
   GD.BlendFunc(SRC_ALPHA, ONE_MINUS_SRC_ALPHA);
-  GD.ColorA(128); // alpha to 128/256
+  GD.ColorA(terminal_window_opacity);
   GD.cmd_bgcolor(COLOR_VALHALLA);
   GD.cmd_fgcolor(COLOR_LIGHT_STEEL_BLUE);
 

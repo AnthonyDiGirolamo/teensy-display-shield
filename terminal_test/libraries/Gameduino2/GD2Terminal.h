@@ -126,6 +126,7 @@ public:
   void new_line();
   void upload_to_graphics_ram();
   void update_scrollbar_position(uint16_t new_position);
+  void update_scrollbar();
   void set_window_bg_color(uint32_t color);
   void set_window_opacity(uint8_t opacity);
   void draw();

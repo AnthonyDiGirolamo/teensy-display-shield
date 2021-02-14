@@ -4,7 +4,6 @@
 #include <math.h>
 #include <SPI.h>
 #include <GD2.h>
-#include "input.h"
 
 #define FRAME_BUFFER_WIDTH 128
 #define FRAME_BUFFER_HEIGHT 128

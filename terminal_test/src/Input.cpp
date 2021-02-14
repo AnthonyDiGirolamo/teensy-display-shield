@@ -1,4 +1,4 @@
-#include "input.h"
+#include "Input.h"
 
 void Input::begin() {
   pinMode(BUTTON1_PIN_U, INPUT_PULLUP);
